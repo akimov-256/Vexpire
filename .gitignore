@@ -1,0 +1,54 @@
+# ====================================
+# Visual Studio Build and Cache Files
+# ====================================
+# Build outputs
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.idb
+*.gch
+*.pch
+
+# Visual Studio cache and project-specific files
+.vs/
+*.user
+*.suo
+*.ncb
+*.opensdf
+*.sdf
+*.cache
+*.VC.db
+*.VC.opendb
+
+# CMake artifacts (if using CMake with Visual Studio)
+CMakeShares/
+CMakeSettings.json
+CMakeUserPresets.json
+out/
+build/
+
+# ====================================
+# SDL3 & Dependency Specifics
+# ====================================
+# Local dependency folders (if copying SDL3 binaries manually)
+/deps/
+/external/
+/libs/
+
+# Dynamic Link Libraries (DLLs) copied to output folders
+# Delete the line below if you want to track assets or custom DLLs in your repository
+*.dll
+
+# NuGet Packages
+packages/
+
+# vcpkg build artifacts (if using vcpkg for SDL3)
+vcpkg_installed/
+vcpkg-configuration.json
