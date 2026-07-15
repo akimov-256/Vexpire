@@ -33,3 +33,10 @@ target_link_libraries(RPG PRIVATE
     SDL3_image::SDL3_image
     SDL3_ttf::SDL3_ttf
 )
+
+add_custom_command(TARGET RPG POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:RPG>
+        $<TARGET_FILE_DIR:RPG>
+    COMMAND_EXPAND_LISTS
+)
