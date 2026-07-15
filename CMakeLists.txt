@@ -20,7 +20,7 @@ add_subdirectory(thirdparty/SDL_ttf)
 # The game
 add_executable(RPG
     src/main.c
-)
+ "src/player.c" "include/player.h" "include/entities.h")
 
 # Your own headers
 target_include_directories(RPG PRIVATE

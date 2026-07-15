@@ -1,22 +1,35 @@
 ﻿#include "../include/main.h"
 
+#define QUIT_ENTITIES(entityCount, entities) \
+	for (int i = 0; i < entityCount; i++) { \
+		entities[i].Quit(); \
+	}
+
+#define UPDATE_ENTITIES(entityCount, entities) \
+	for (int i = 0; i < entityCount; i++) { \
+		entities[i].Update(); \
+	}
+
+#define HANDLE_ENTITIES_EVENTS(entityCount, entities, event) \
+	for (int i = 0; i < entityCount; i++) { \
+		entities[i].HandleEvents(event); \
+	}
+
+#define RENDER_ENTITIES(entityCount, entities, renderer) \
+	for (int i = 0; i < entityCount; i++) { \
+		entities[i].Render(renderer); \
+	}
+
+// Declare state variables
 SDL_Window* window;
 SDL_Renderer* renderer;
-SDL_Texture* playerTexture;
-SDL_FRect playerSrc = {
-	.x = 18,
-	.y = 16,
-	.w = 13,
-	.h = 16
-};
-SDL_FRect playerDst = {
-	.x = 20,
-	.y = 20,
-	.w = 26,
-	.h = 32
-};
+
+// Declare entities list
+Entity entities[MAX_ENTITIES_COUNT];
+int entitiyCount = 0;
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+	QUIT_ENTITIES(entitiyCount, entities);
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 	SDL_DestroyWindow(window);
@@ -31,14 +44,22 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 	return SDL_APP_CONTINUE;
 }
 
+void Update() {
+	UPDATE_ENTITIES(entitiyCount, entities);
+}
+
 void Render() {
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderTexture(renderer, playerTexture, &playerSrc, &playerDst);
+
+	// Render entities
+	RENDER_ENTITIES(entitiyCount, entities, renderer);
+
 	SDL_RenderPresent(renderer);
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate) {
+	Update();
 	Render();
 
 	return SDL_APP_CONTINUE;
@@ -65,13 +86,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 		return SDL_APP_FAILURE;
 	}
 
-	// Load player texture
-	const char path[] = "assets/Char_Sprites/char_spritesheet.png";
-	playerTexture = IMG_LoadTexture(renderer, path);
-	if (!playerTexture) {
-		SDL_Log("Error loading player texture: %s", SDL_GetError());
-	}
-	SDL_SetTextureScaleMode(playerTexture, SDL_SCALEMODE_NEAREST);
+	entities[entitiyCount++] = InitPlayer(renderer);
 
 	// Initialization successful
 	return SDL_APP_CONTINUE;
