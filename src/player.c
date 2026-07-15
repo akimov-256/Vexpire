@@ -7,12 +7,17 @@ static SDL_FRect playerSrc = {
 	.w = 13,
 	.h = 16
 };
-static SDL_FRect playerDst = {
-	.x = 20,
-	.y = 20,
-	.w = 26,
-	.h = 32
-};
+static float lastTime = 0;
+
+typedef struct {
+	float x;
+	float y;
+} Position;
+
+Position playerPosition = {20, 20};
+
+// Player movement properties
+float speed = 300.0f;
 
 static void Quit() {
 
@@ -23,10 +28,31 @@ static void HandleEvents(SDL_Event* event) {
 }
 
 static void Update() {
+	// Calculate delta time
+	float now = SDL_GetTicks();
+	float deltaTime = (now - lastTime) / 1000;
+	lastTime = now;
 
+	// Get the keyboard status
+	const _Bool *keyboardState = SDL_GetKeyboardState(NULL);
+
+	if (keyboardState[SDL_SCANCODE_W])
+		playerPosition.y -= speed * deltaTime;
+	if (keyboardState[SDL_SCANCODE_S])
+		playerPosition.y += speed * deltaTime;
+	if (keyboardState[SDL_SCANCODE_A])
+		playerPosition.x -= speed * deltaTime;
+	if (keyboardState[SDL_SCANCODE_D])
+		playerPosition.x += speed * deltaTime;
 }
 
 static void Render(SDL_Renderer* renderer) {
+	SDL_FRect playerDst = {
+		.x = playerPosition.x,
+		.y = playerPosition.y,
+		.w = 26,
+		.h = 32
+	};
 	SDL_RenderTexture(renderer, playerTexture, &playerSrc, &playerDst);
 }
 
