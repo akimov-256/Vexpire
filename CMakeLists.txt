@@ -1,13 +1,35 @@
-﻿cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.20)
 
 project(RPG LANGUAGES C)
 
-# Create the executable
+# C standard
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
+set(SDLIMAGE_AVIF OFF CACHE BOOL "" FORCE)
+set(SDLIMAGE_WEBP OFF CACHE BOOL "" FORCE)
+set(SDLIMAGE_JXL OFF CACHE BOOL "" FORCE)
+set(SDLIMAGE_TIF OFF CACHE BOOL "" FORCE)
+
+# SDL libraries
+add_subdirectory(thirdparty/SDL)
+add_subdirectory(thirdparty/SDL_image)
+add_subdirectory(thirdparty/SDL_ttf)
+
+# The game
 add_executable(RPG
     src/main.c
 )
 
-# Use the C17 standard
-set_property(TARGET RPG PROPERTY C_STANDARD 17)
-set_property(TARGET RPG PROPERTY C_STANDARD_REQUIRED ON)
-set_property(TARGET RPG PROPERTY C_EXTENSIONS OFF)
+# Your own headers
+target_include_directories(RPG PRIVATE
+    include
+)
+
+# Link libraries
+target_link_libraries(RPG PRIVATE
+    SDL3::SDL3
+    SDL3_image::SDL3_image
+    SDL3_ttf::SDL3_ttf
+)
