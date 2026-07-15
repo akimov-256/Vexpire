@@ -1,9 +1,44 @@
 ﻿#include "../include/main.h"
 
-int main()
-{
-	SDL_Init(SDL_INIT_VIDEO);
+SDL_Window* window;
+SDL_Renderer* renderer;
 
-	printf("Hello SDL");
-	return 0;
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+	if (event->type == SDL_EVENT_QUIT) {
+		return SDL_APP_SUCCESS;
+	}
+	return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void *appstate) {
+
+}
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
+	// Initialize SDL
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
+		SDL_Log("Error initializing SDL: %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+
+	// Create window
+	window = SDL_CreateWindow("Vexpire", 800, 600, NULL);
+	if (!window) {
+		SDL_Log("Error creating window: %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+
+	// Create renderer
+	renderer = SDL_CreateRenderer(window, NULL);
+	if (!renderer) {
+		SDL_Log("Error creating renderer: %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
+
+	// Initialization successful
+	return SDL_APP_CONTINUE;
 }
