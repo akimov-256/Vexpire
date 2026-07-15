@@ -20,6 +20,12 @@
 		entities[i].Render(renderer); \
 	}
 
+// Declare window resolution properties
+float w = 1280;
+float h = 720;
+float logicalW = 960;
+float logicalH = 540;
+
 // Declare state variables
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -73,7 +79,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	}
 
 	// Create window
-	window = SDL_CreateWindow("Vexpire", 800, 600, NULL);
+	window = SDL_CreateWindow("Vexpire", w, h, SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		SDL_Log("Error creating window: %s", SDL_GetError());
 		return SDL_APP_FAILURE;
@@ -85,6 +91,9 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 		SDL_Log("Error creating renderer: %s", SDL_GetError());
 		return SDL_APP_FAILURE;
 	}
+
+	// Set the logical resolution
+	SDL_SetRenderLogicalPresentation(renderer, logicalW, logicalH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	entities[entitiyCount++] = InitPlayer(renderer);
 
