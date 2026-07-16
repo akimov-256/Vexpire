@@ -1,20 +1,19 @@
 #include "../include/player.h"
 
-static SDL_Texture* playerTexture;
-static SDL_FRect playerSrc = {
-	.x = 18,
-	.y = 16,
-	.w = 13,
-	.h = 16
-};
 static float lastTime = 0;
 
 typedef struct {
-	float x;
-	float y;
-} Position;
+	// Player position
+	SDL_FRect dst;
 
-Position playerPosition = {20, 20};
+	// Player texture
+	SDL_Texture* texture;
+
+	// Player animation
+	Animator animator;
+} Player;
+
+Player player = {{20, 20, 32, 32}};
 
 // Player movement properties
 float speed = 300.0f;
@@ -37,33 +36,65 @@ static void Update() {
 	const _Bool *keyboardState = SDL_GetKeyboardState(NULL);
 
 	if (keyboardState[SDL_SCANCODE_W])
-		playerPosition.y -= speed * deltaTime;
+		player.dst.y -= speed * deltaTime;
 	if (keyboardState[SDL_SCANCODE_S])
-		playerPosition.y += speed * deltaTime;
+		player.dst.y += speed * deltaTime;
 	if (keyboardState[SDL_SCANCODE_A])
-		playerPosition.x -= speed * deltaTime;
+		player.dst.x -= speed * deltaTime;
 	if (keyboardState[SDL_SCANCODE_D])
-		playerPosition.x += speed * deltaTime;
+		player.dst.x += speed * deltaTime;
+
+	// Handle Animation
+	AnimatorUpdate(&player.animator, deltaTime);
 }
 
 static void Render(SDL_Renderer* renderer) {
-	SDL_FRect playerDst = {
-		.x = playerPosition.x,
-		.y = playerPosition.y,
-		.w = 26,
-		.h = 32
+	if (player.animator.current == NULL)
+		return;
+
+	if (player.texture == NULL)
+		return;
+
+	int frame = GetCurrentFrame(&player.animator);
+
+	SDL_FRect src =
+	{
+		(float)(player.animator.current->startFrame + frame * 16),
+		(float)(player.animator.current->row * 16),
+		16,
+		16
 	};
-	SDL_RenderTexture(renderer, playerTexture, &playerSrc, &playerDst);
+
+	SDL_RenderTexture(renderer,
+		player.texture,
+		&src,
+		&player.dst);
 }
 
 Entity InitPlayer(SDL_Renderer* renderer) {
 	// Load player texture
 	const char path[] = "assets/Char_Sprites/char_spritesheet.png";
-	playerTexture = IMG_LoadTexture(renderer, path);
-	if (!playerTexture) {
+	player.texture = IMG_LoadTexture(renderer, path);
+	if (!player.texture) {
 		SDL_Log("Error loading player texture: %s", SDL_GetError());
+		return (Entity) { 0 };
 	}
-	SDL_SetTextureScaleMode(playerTexture, SDL_SCALEMODE_NEAREST);
+	SDL_SetTextureScaleMode(player.texture, SDL_SCALEMODE_NEAREST);
+
+	// Initialize the animator
+	static Animation idleDown =
+	{
+		.row = 1,
+		.startFrame = 128,
+		.frameCount = 6,
+		.frameDuration = 0.2f,
+		.loop = true
+	};
+
+	AnimatorInit(&player.animator);
+
+	AnimationPlay(&player.animator, &idleDown);
+
 	Entity player = { Quit, HandleEvents, Update, Render };
 	return player;
 }
