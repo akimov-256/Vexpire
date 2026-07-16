@@ -3,17 +3,26 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+typedef enum {
+	DOWN = 1,
+	LEFT,
+	RIGHT,
+	UP
+} Direction;
+
 typedef struct {
-	int row;
 	int startFrame;
 	int frameCount;
+
+	Direction direction;
 
 	float frameDuration;
 	bool loop;
 } Animation;
 
 typedef struct {
-	const Animation* current;
+	Animation* current;
+
 
 	int frame;
 	float timer;

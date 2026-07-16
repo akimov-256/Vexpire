@@ -36,13 +36,25 @@ static void Update() {
 	const _Bool *keyboardState = SDL_GetKeyboardState(NULL);
 
 	if (keyboardState[SDL_SCANCODE_W])
+	{
 		player.dst.y -= speed * deltaTime;
+		player.animator.current->direction = UP;
+	}
 	if (keyboardState[SDL_SCANCODE_S])
+	{
 		player.dst.y += speed * deltaTime;
+		player.animator.current->direction = DOWN;
+	}
 	if (keyboardState[SDL_SCANCODE_A])
+	{
 		player.dst.x -= speed * deltaTime;
+		player.animator.current->direction = LEFT;
+	}
 	if (keyboardState[SDL_SCANCODE_D])
+	{
 		player.dst.x += speed * deltaTime;
+		player.animator.current->direction = RIGHT;
+	}
 
 	// Handle Animation
 	AnimatorUpdate(&player.animator, deltaTime);
@@ -60,7 +72,7 @@ static void Render(SDL_Renderer* renderer) {
 	SDL_FRect src =
 	{
 		(float)(player.animator.current->startFrame + frame * 16),
-		(float)(player.animator.current->row * 16),
+		(float)(player.animator.current->direction * 16),
 		16,
 		16
 	};
@@ -84,7 +96,7 @@ Entity InitPlayer(SDL_Renderer* renderer) {
 	// Initialize the animator
 	static Animation idleDown =
 	{
-		.row = 1,
+		.direction = DOWN,
 		.startFrame = 128,
 		.frameCount = 6,
 		.frameDuration = 0.2f,
