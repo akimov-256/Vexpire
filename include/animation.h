@@ -10,11 +10,16 @@ typedef enum {
 	UP
 } Direction;
 
+typedef enum {
+	WALKING = 1,
+	IDLE = 8
+} Movement;
+
 typedef struct {
-	int startFrame;
 	int frameCount;
 
 	Direction direction;
+	Movement movement;
 
 	float frameDuration;
 	bool loop;

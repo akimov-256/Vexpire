@@ -13,7 +13,7 @@ typedef struct {
 	Animator animator;
 } Player;
 
-Player player = {{20, 20, 32, 32}};
+Player player = {{20, 20, 64, 64}};
 
 // Player movement properties
 float speed = 300.0f;
@@ -35,27 +35,33 @@ static void Update() {
 	// Get the keyboard status
 	const _Bool *keyboardState = SDL_GetKeyboardState(NULL);
 
+	player.animator.current->movement = IDLE;
+
 	if (keyboardState[SDL_SCANCODE_W])
 	{
 		player.dst.y -= speed * deltaTime;
 		player.animator.current->direction = UP;
+		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_S])
 	{
 		player.dst.y += speed * deltaTime;
 		player.animator.current->direction = DOWN;
+		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_A])
 	{
 		player.dst.x -= speed * deltaTime;
 		player.animator.current->direction = LEFT;
+		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_D])
 	{
 		player.dst.x += speed * deltaTime;
 		player.animator.current->direction = RIGHT;
+		player.animator.current->movement = WALKING;
 	}
-
+	
 	// Handle Animation
 	AnimatorUpdate(&player.animator, deltaTime);
 }
@@ -71,7 +77,7 @@ static void Render(SDL_Renderer* renderer) {
 
 	SDL_FRect src =
 	{
-		(float)(player.animator.current->startFrame + frame * 16),
+		(float)((player.animator.current->movement + frame) * 16),
 		(float)(player.animator.current->direction * 16),
 		16,
 		16
@@ -97,7 +103,7 @@ Entity InitPlayer(SDL_Renderer* renderer) {
 	static Animation idleDown =
 	{
 		.direction = DOWN,
-		.startFrame = 128,
+		.movement = IDLE,
 		.frameCount = 6,
 		.frameDuration = 0.2f,
 		.loop = true
