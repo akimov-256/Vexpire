@@ -9,6 +9,7 @@
 #include <SDL3_image/SDL_image.h>
 #include "entities.h"
 #include "player.h"
+#include "map.h"
 
 #define MAX_ENTITIES_COUNT 100
 

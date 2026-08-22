@@ -20,7 +20,7 @@ add_subdirectory(thirdparty/SDL_ttf)
 # The game
 add_executable(RPG
     src/main.c
- "src/player.c" "include/player.h" "include/entities.h" "src/animation.c" "include/animation.h")
+ "src/player.c" "include/player.h" "include/entities.h" "src/animation.c" "include/animation.h" "src/map.c" "include/map.h")
 
 # Headers
 target_include_directories(RPG PRIVATE
@@ -47,4 +47,7 @@ add_custom_command(TARGET RPG POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:RPG>/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/map"
+        "$<TARGET_FILE_DIR:RPG>/map"
 )

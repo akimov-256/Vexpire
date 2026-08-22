@@ -34,6 +34,9 @@ SDL_Renderer* renderer;
 Entity entities[MAX_ENTITIES_COUNT];
 int entitiyCount = 0;
 
+// Declare map variable
+cute_tiled_map_t* map;
+
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
 	QUIT_ENTITIES(entitiyCount, entities);
 	SDL_DestroyRenderer(renderer);
@@ -95,7 +98,16 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	// Set the logical resolution
 	SDL_SetRenderLogicalPresentation(renderer, logicalW, logicalH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
+	// Initialize entities
 	entities[entitiyCount++] = InitPlayer(renderer);
+
+	// Load map
+	map = LoadMap("map/map.json");
+
+	if (!map) {
+		SDL_Log("Error loading map");
+		return SDL_APP_FAILURE;
+	}
 
 	// Initialization successful
 	return SDL_APP_CONTINUE;
