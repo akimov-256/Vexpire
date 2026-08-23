@@ -38,6 +38,9 @@ int entitiyCount = 0;
 cute_tiled_map_t* map;
 SDL_Texture* tilesetTexture;
 
+// Declare camera
+Camera camera;
+
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
 	QUIT_ENTITIES(entitiyCount, entities);
 	SDL_DestroyRenderer(renderer);
@@ -62,10 +65,10 @@ void Render() {
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-	SDL_SetTextureScaleMode(tilesetTexture, SDL_SCALEMODE_NEAREST);								// Set the texture scale mode to nearest
-	RenderMap(map, renderer, tilesetTexture);													// Render the map
+	SDL_SetTextureScaleMode(tilesetTexture, SDL_SCALEMODE_NEAREST);		// Set the texture scale mode to nearest
+	RenderMap(map, renderer, tilesetTexture);							// Render the map
 
-	RENDER_ENTITIES(entitiyCount, entities, renderer);											// Render entities after rendering the map
+	RENDER_ENTITIES(entitiyCount, entities, renderer);					// Render entities after rendering the map
 
 	SDL_RenderPresent(renderer);
 }
@@ -101,8 +104,11 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	// Set the logical resolution
 	SDL_SetRenderLogicalPresentation(renderer, logicalW, logicalH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
+	// Initialize camera
+	Camera_Init(&camera, 0, 0, logicalW, logicalH);				// Initialize the camera with position and size
+
 	// Initialize entities
-	entities[entitiyCount++] = InitPlayer(renderer);							// Initialize the player entity and add it to the entities list
+	entities[entitiyCount++] = InitPlayer(renderer);			// Initialize the player entity and add it to the entities list
 
 	// Load map
 	tilesetTexture = IMG_LoadTexture(renderer, "assets/Overworld_Tileset.png");	// Load the tileset texture
@@ -111,8 +117,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 		return SDL_APP_FAILURE;
 	}
 
-	map = LoadMap("map/map.json");												// Load the map from the JSON file
-	if (!map) {																	// Check if the map was loaded successfully
+	map = LoadMap("map/map.json");					// Load the map from the JSON file
+	if (!map) {										// Check if the map was loaded successfully
 		SDL_Log("Error loading map");
 		return SDL_APP_FAILURE;
 	}
