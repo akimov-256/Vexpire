@@ -2,7 +2,7 @@
 
 static Uint64 lastTime = 0;
 
-Player player = {{100, 100, 64, 64}};
+Player player = {{200, 200, 64, 64}};
 
 // Player movement properties
 float speed = 300.0f;
@@ -56,16 +56,16 @@ static void Update() {
 	}
 
 	// Handle camera movement when player is near the edges of the screen
-	if (newX < 20)
+	if (newX < 150)
 		player.camera->x -= speed * deltaTime;
-	else if (newX > player.camera->width - 30 - player.dst.w)
+	else if (newX > player.camera->width - 150 - player.dst.w)
 		player.camera->x += speed * deltaTime;
 	else
 		player.dst.x = newX;
 
-	if (newY < 20)
+	if (newY < 150)
 		player.camera->y -= speed * deltaTime;
-	else if (newY > player.camera->height - 30 - player.dst.h)
+	else if (newY > player.camera->height - 150 - player.dst.h)
 		player.camera->y += speed * deltaTime;
 	else
 		player.dst.y = newY;
