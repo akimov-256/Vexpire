@@ -34,8 +34,9 @@ SDL_Renderer* renderer;
 Entity entities[MAX_ENTITIES_COUNT];
 int entitiyCount = 0;
 
-// Declare map variable
+// Declare map variables
 cute_tiled_map_t* map;
+SDL_Texture* tilesetTexture;
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {
 	QUIT_ENTITIES(entitiyCount, entities);
@@ -61,8 +62,10 @@ void Render() {
 	SDL_RenderClear(renderer);
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-	// Render entities
-	RENDER_ENTITIES(entitiyCount, entities, renderer);
+	SDL_SetTextureScaleMode(tilesetTexture, SDL_SCALEMODE_NEAREST);								// Set the texture scale mode to nearest
+	RenderMap(map, renderer, tilesetTexture);													// Render the map
+
+	RENDER_ENTITIES(entitiyCount, entities, renderer);											// Render entities after rendering the map
 
 	SDL_RenderPresent(renderer);
 }
@@ -99,12 +102,17 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	SDL_SetRenderLogicalPresentation(renderer, logicalW, logicalH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	// Initialize entities
-	entities[entitiyCount++] = InitPlayer(renderer);
+	entities[entitiyCount++] = InitPlayer(renderer);							// Initialize the player entity and add it to the entities list
 
 	// Load map
-	map = LoadMap("map/map.json");
+	tilesetTexture = IMG_LoadTexture(renderer, "assets/Overworld_Tileset.png");	// Load the tileset texture
+	if (!tilesetTexture) {														// Check if the texture was loaded successfully
+		SDL_Log("Error loading tileset texture: %s", SDL_GetError());
+		return SDL_APP_FAILURE;
+	}
 
-	if (!map) {
+	map = LoadMap("map/map.json");												// Load the map from the JSON file
+	if (!map) {																	// Check if the map was loaded successfully
 		SDL_Log("Error loading map");
 		return SDL_APP_FAILURE;
 	}
