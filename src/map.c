@@ -56,10 +56,10 @@ void RenderMap(cute_tiled_map_t* map, SDL_Renderer* renderer, SDL_Texture* textu
 				};
 
 				SDL_FRect destRect = {										// Destination rectangle on the screen
-					.x = i * map->tilewidth,
-					.y = j * map->tileheight,
-					.h = map->tileheight,
-					.w = map->tilewidth
+					.x = i * map->tilewidth * 4,							// Scale dest Rectangle by 4 to match player size
+					.y = j * map->tileheight * 4,
+					.h = map->tileheight * 4,
+					.w = map->tilewidth * 4
 				};
 
 				SDL_RenderTexture(renderer, texture, &srcRect, &destRect);	// Render the tile to the screen
