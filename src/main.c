@@ -66,7 +66,7 @@ void Render() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	SDL_SetTextureScaleMode(tilesetTexture, SDL_SCALEMODE_NEAREST);		// Set the texture scale mode to nearest
-	RenderMap(map, renderer, tilesetTexture);							// Render the map
+	RenderMap(map, renderer, tilesetTexture, &camera);							// Render the map
 
 	RENDER_ENTITIES(entitiyCount, entities, renderer);					// Render entities after rendering the map
 
@@ -105,10 +105,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	SDL_SetRenderLogicalPresentation(renderer, logicalW, logicalH, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	// Initialize camera
-	Camera_Init(&camera, 0, 0, logicalW, logicalH);				// Initialize the camera with position and size
+	Camera_Init(&camera, 0.0f, 0.0f, logicalW, logicalH);						// Initialize the camera with position and size
 
 	// Initialize entities
-	entities[entitiyCount++] = InitPlayer(renderer);			// Initialize the player entity and add it to the entities list
+	entities[entitiyCount++] = InitPlayer(renderer, &camera);			// Initialize the player entity and add it to the entities list
 
 	// Load map
 	tilesetTexture = IMG_LoadTexture(renderer, "assets/Overworld_Tileset.png");	// Load the tileset texture

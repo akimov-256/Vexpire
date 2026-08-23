@@ -20,8 +20,8 @@ void DestroyMap(cute_tiled_map_t* map) {
 	}
 }
 
-void RenderMap(cute_tiled_map_t* map, SDL_Renderer* renderer, SDL_Texture* texture) {
-	if (!map || !renderer || !texture) {									// Validate input parameters
+void RenderMap(cute_tiled_map_t* map, SDL_Renderer* renderer, SDL_Texture* texture, Camera* camera) {
+	if (!map || !renderer || !texture || !camera) {							// Validate input parameters
 		return;
 	}
 
@@ -56,8 +56,8 @@ void RenderMap(cute_tiled_map_t* map, SDL_Renderer* renderer, SDL_Texture* textu
 				};
 
 				SDL_FRect destRect = {										// Destination rectangle on the screen
-					.x = i * map->tilewidth * 4,							// Scale dest Rectangle by 4 to match player size
-					.y = j * map->tileheight * 4,
+					.x = i * map->tilewidth * 4 - camera->x,				// Use camera position to offset the tile rendering
+					.y = j * map->tileheight * 4 - camera->y,				// Scale dest Rectangle by 4 to match player size
 					.h = map->tileheight * 4,
 					.w = map->tilewidth * 4
 				};

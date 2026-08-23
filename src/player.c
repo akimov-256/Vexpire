@@ -1,19 +1,8 @@
 #include "../include/player.h"
 
-static float lastTime = 0;
+static Uint64 lastTime = 0;
 
-typedef struct {
-	// Player position
-	SDL_FRect dst;
-
-	// Player texture
-	SDL_Texture* texture;
-
-	// Player animation
-	Animator animator;
-} Player;
-
-Player player = {{20, 20, 64, 64}};
+Player player = {{100, 100, 64, 64}};
 
 // Player movement properties
 float speed = 300.0f;
@@ -28,8 +17,9 @@ static void HandleEvents(SDL_Event* event) {
 
 static void Update() {
 	// Calculate delta time
-	float now = SDL_GetTicks();
-	float deltaTime = (now - lastTime) / 1000;
+	Uint64 now = SDL_GetTicks();
+	float deltaTime = (now - lastTime) / 1000.0f;
+	if (deltaTime > 0.1f) deltaTime = 0.1f;						// clamp to avoid spikes from stalls/drags
 	lastTime = now;
 
 	// Get the keyboard status
@@ -37,30 +27,48 @@ static void Update() {
 
 	player.animator.current->movement = IDLE;
 
+	float newX = player.dst.x;
+	float newY = player.dst.y;
+
 	if (keyboardState[SDL_SCANCODE_W])
 	{
-		player.dst.y -= speed * deltaTime;
+		newY -= speed * deltaTime;
 		player.animator.current->direction = UP;
 		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_S])
 	{
-		player.dst.y += speed * deltaTime;
+		newY += speed * deltaTime;
 		player.animator.current->direction = DOWN;
 		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_A])
 	{
-		player.dst.x -= speed * deltaTime;
+		newX -= speed * deltaTime;
 		player.animator.current->direction = LEFT;
 		player.animator.current->movement = WALKING;
 	}
 	if (keyboardState[SDL_SCANCODE_D])
 	{
-		player.dst.x += speed * deltaTime;
+		newX += speed * deltaTime;
 		player.animator.current->direction = RIGHT;
 		player.animator.current->movement = WALKING;
 	}
+
+	// Handle camera movement when player is near the edges of the screen
+	if (newX < 20)
+		player.camera->x -= speed * deltaTime;
+	else if (newX > player.camera->width - 30 - player.dst.w)
+		player.camera->x += speed * deltaTime;
+	else
+		player.dst.x = newX;
+
+	if (newY < 20)
+		player.camera->y -= speed * deltaTime;
+	else if (newY > player.camera->height - 30 - player.dst.h)
+		player.camera->y += speed * deltaTime;
+	else
+		player.dst.y = newY;
 	
 	// Handle Animation
 	AnimatorUpdate(&player.animator, deltaTime);
@@ -83,13 +91,11 @@ static void Render(SDL_Renderer* renderer) {
 		16
 	};
 
-	SDL_RenderTexture(renderer,
-		player.texture,
-		&src,
-		&player.dst);
+	SDL_RenderTexture(renderer, player.texture,
+						&src, &player.dst);
 }
 
-Entity InitPlayer(SDL_Renderer* renderer) {
+Entity InitPlayer(SDL_Renderer* renderer, Camera* camera) {
 	// Load player texture
 	const char path[] = "assets/Char_Sprites/char_spritesheet.png";
 	player.texture = IMG_LoadTexture(renderer, path);
@@ -112,6 +118,13 @@ Entity InitPlayer(SDL_Renderer* renderer) {
 	AnimatorInit(&player.animator);
 
 	AnimationPlay(&player.animator, &idleDown);
+
+	// Initialize the camera
+	player.camera = camera;
+	if (player.camera == NULL) {
+		SDL_Log("Error initializing player camera: Camera pointer is NULL.");
+		return (Entity) { 0 };
+	}
 
 	Entity player = { Quit, HandleEvents, Update, Render };
 	return player;

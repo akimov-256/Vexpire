@@ -1,6 +1,6 @@
 #include "../include/camera.h"
 
-void Camera_Init(Camera* camera, int x, int y, int width, int height) {
+void Camera_Init(Camera* camera, float x, float y, float width, float height) {
 	if (!camera) {								// Validate input parameters
 		SDL_Log("Camera pointer is NULL.");
 		return;

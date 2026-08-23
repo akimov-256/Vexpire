@@ -1,14 +1,14 @@
 #pragma once
 
 typedef struct {							// Camera structure
-	int x;
-	int y;
+	float x;
+	float y;
 
-	int width;
-	int height;
+	float width;
+	float height;
 
 } Camera;
 
 void Camera_Init(Camera* camera,			// Initialize the camera with position and size
-					int x, int y,
-					int width, int height); 
+					float x, float y,
+					float width, float height); 
