@@ -46,12 +46,26 @@ add_custom_command(TARGET RPG POST_BUILD
     COMMAND_EXPAND_LISTS
 )
 
-# Copy Assets
-add_custom_command(TARGET RPG POST_BUILD
+# Copy Directories
+add_custom_command(
+    OUTPUT "${CMAKE_BINARY_DIR}/assets_stamp.txt"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:RPG>/assets"
+    COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/assets_stamp.txt"
+    DEPENDS ${ASSET_FILES}
+    COMMENT "Copying asset files"
+)
+
+add_custom_command(
+    OUTPUT "${CMAKE_BINARY_DIR}/map_stamp.txt"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/map"
         "$<TARGET_FILE_DIR:RPG>/map"
+    COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/map_stamp.txt"
+    DEPENDS ${MAP_FILES}
+    COMMENT "Copying map files"
 )
+
+add_custom_target(CopyAssetFiles ALL DEPENDS "${CMAKE_BINARY_DIR}/assets_stamp.txt")
+add_custom_target(CopyMapFiles ALL DEPENDS "${CMAKE_BINARY_DIR}/map_stamp.txt")
