@@ -5,6 +5,7 @@
 #include "entities.h"
 #include "animation.h"
 #include "camera.h"
+#include "map.h"
 
 
 typedef struct {
@@ -19,6 +20,9 @@ typedef struct {
 
 	// Player camera
 	Camera* camera;
+
+	// Player map
+	cute_tiled_map_t* map;
 } Player;
 
-Entity InitPlayer(SDL_Renderer* renderer, Camera* camera);
+Entity InitPlayer(SDL_Renderer* renderer, cute_tiled_map_t* map, Camera* camera);

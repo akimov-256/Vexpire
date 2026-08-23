@@ -60,14 +60,14 @@ static void Update() {
 		player.camera->x -= speed * deltaTime;
 	else if (newX > player.camera->width - 150 - player.dst.w)
 		player.camera->x += speed * deltaTime;
-	else
+	else if (CanMoveTo(player.map, newX + player.camera->x, player.dst.y + player.camera->y, player.dst.w, player.dst.h)) 
 		player.dst.x = newX;
 
 	if (newY < 150)
 		player.camera->y -= speed * deltaTime;
 	else if (newY > player.camera->height - 150 - player.dst.h)
 		player.camera->y += speed * deltaTime;
-	else
+	else if (CanMoveTo(player.map, player.dst.x + player.camera->x, newY + player.camera->y, player.dst.w, player.dst.h))
 		player.dst.y = newY;
 	
 	// Handle Animation
@@ -95,7 +95,7 @@ static void Render(SDL_Renderer* renderer) {
 						&src, &player.dst);
 }
 
-Entity InitPlayer(SDL_Renderer* renderer, Camera* camera) {
+Entity InitPlayer(SDL_Renderer* renderer, cute_tiled_map_t* map, Camera* camera) {
 	// Load player texture
 	const char path[] = "assets/Char_Sprites/char_spritesheet.png";
 	player.texture = IMG_LoadTexture(renderer, path);
@@ -118,6 +118,13 @@ Entity InitPlayer(SDL_Renderer* renderer, Camera* camera) {
 	AnimatorInit(&player.animator);
 
 	AnimationPlay(&player.animator, &idleDown);
+
+	// Initialize the map
+	player.map = map;
+	if (player.map == NULL) {
+		SDL_Log("Error initializing player map: Map pointer is NULL.");
+		return (Entity) { 0 };
+	}
 
 	// Initialize the camera
 	player.camera = camera;

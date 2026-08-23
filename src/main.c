@@ -107,9 +107,6 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 	// Initialize camera
 	Camera_Init(&camera, 0.0f, 0.0f, logicalW, logicalH);						// Initialize the camera with position and size
 
-	// Initialize entities
-	entities[entitiyCount++] = InitPlayer(renderer, &camera);			// Initialize the player entity and add it to the entities list
-
 	// Load map
 	tilesetTexture = IMG_LoadTexture(renderer, "assets/Overworld_Tileset.png");	// Load the tileset texture
 	if (!tilesetTexture) {														// Check if the texture was loaded successfully
@@ -122,6 +119,9 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char** argv) {
 		SDL_Log("Error loading map");
 		return SDL_APP_FAILURE;
 	}
+
+	// Initialize entities
+	entities[entitiyCount++] = InitPlayer(renderer, map, &camera);				// Initialize the player entity and add it to the entities list
 
 	// Initialization successful
 	return SDL_APP_CONTINUE;
