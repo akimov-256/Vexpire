@@ -82,17 +82,17 @@ bool CanMoveTo(cute_tiled_map_t* map, float x, float y, float width, float heigh
 	}
 
 	// Check all four corners of the player's bounding box
-	float corners[4][2] = {
-		{ x			   , y				},	// top-left
-		{ x + width - 1, y				},	// top-right
-		{ x			   , y + height - 1	},	// bottom-left
-		{ x + width - 1, y + height - 1 }   // bottom-right
+	float corners[4][2] = {											// Make player bounding box smaller for more accurate collision detection
+		{ x	+ width / 4	  , y + height / 2	},	// top-left
+		{ x + width * 3/4 , y + height / 2	},	// top-right
+		{ x	+ width / 4	  , y + height - 1	},	// bottom-left
+		{ x + width * 3/4 , y + height - 1  }   // bottom-right
 	};
 
 	for (int i = 0; i < 4; i++) {									// Loop through each corner of the bounding box
 
-		int tileX = (int)(corners[i][0] / (map->tilewidth * 4));			// Extract x and y values from the corner
-		int tileY = (int)(corners[i][1] / (map->tileheight * 4));		// Convert world coordinates to tile coordinates
+		int tileX = (int)(corners[i][0] / (map->tilewidth * 4));	// Extract x and y values from the corner
+		int tileY = (int)(corners[i][1] / (map->tileheight * 4));	// Convert world coordinates to tile coordinates
 
 		if (tileX < 0 || tileX >= collisionLayer->width ||
 			tileY < 0 || tileY >= collisionLayer->height) {

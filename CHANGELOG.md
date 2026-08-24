@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Changed CmakeLists.txt to copy assets and map folders to build directory.
+- Changed bounding box to be smaller to allow for better collision detection.
