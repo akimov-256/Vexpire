@@ -15,5 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added basic collision detection for player and map boundaries.
 - Added solid tag to map tiles for collision detection.
 
+### Fixed
+- Fixed collision detection for player with objects and map boundaries.
+
 ### Changed
 - Changed CmakeLists.txt to copy assets and map folders to build directory.

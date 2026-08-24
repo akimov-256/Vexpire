@@ -55,20 +55,25 @@ static void Update() {
 		player.animator.current->movement = WALKING;
 	}
 
-	// Handle camera movement when player is near the edges of the screen
-	if (newX < 150)
-		player.camera->x -= speed * deltaTime;
-	else if (newX > player.camera->width - 150 - player.dst.w)
-		player.camera->x += speed * deltaTime;
-	else if (CanMoveTo(player.map, newX + player.camera->x, player.dst.y + player.camera->y, player.dst.w, player.dst.h)) 
-		player.dst.x = newX;
+	if (CanMoveTo(player.map, newX + player.camera->x,
+			player.dst.y + player.camera->y, player.dst.w, player.dst.h)) {	// Check first for collision
+		if (newX < 150)														// Check if the player is near camera edges
+			player.camera->x -= speed * deltaTime;							// Move the camera if near the left edge
+		else if (newX > player.camera->width - 150 - player.dst.w)
+			player.camera->x += speed * deltaTime;
+		else
+			player.dst.x = newX;											// Move the player if not near camera edges
+	}
 
-	if (newY < 150)
-		player.camera->y -= speed * deltaTime;
-	else if (newY > player.camera->height - 150 - player.dst.h)
-		player.camera->y += speed * deltaTime;
-	else if (CanMoveTo(player.map, player.dst.x + player.camera->x, newY + player.camera->y, player.dst.w, player.dst.h))
-		player.dst.y = newY;
+	if (CanMoveTo(player.map, player.dst.x + player.camera->x,
+			newY + player.camera->y, player.dst.w, player.dst.h)) {			// Check first for collision
+		if (newY < 150)														// Check if the player is near camera edges
+			player.camera->y -= speed * deltaTime;							// Move the camera if near the left edge
+		else if (newY > player.camera->height - 150 - player.dst.h)
+			player.camera->y += speed * deltaTime;
+		else
+			player.dst.y = newY;											// Move the player if not near camera edges
+	}
 	
 	// Handle Animation
 	AnimatorUpdate(&player.animator, deltaTime);
